@@ -172,20 +172,6 @@ const genericCode = 'function identity<T>(arg: T): T { return arg; }';
 console.log(hasJSXInString(genericCode)); // false
 ```
 
-## How It Works
-
-1. **AST Parsing**: Uses [ast-grep](https://github.com/ast-grep/ast-grep) to parse files as TypeScript/TSX
-2. **Node Detection**: Searches the AST for JSX-specific node types defined in the [JSX specification](https://facebook.github.io/jsx/)
-3. **Reliable Results**: Avoids false positives from regex-based detection or angle brackets in comparisons
-
-## Use Cases
-
-- **Build Tools**: Determine which files need JSX transformation
-- **Linters**: Validate JSX usage against project rules
-- **Code Analysis**: Audit codebase for JSX patterns
-- **CI/CD**: Verify file types in automated pipelines
-- **Migration Tools**: Identify files during framework migrations
-
 ## Requirements
 
 - Node.js >= 20.0.0
