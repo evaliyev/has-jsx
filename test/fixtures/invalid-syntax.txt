@@ -1,0 +1,6 @@
+This is not valid JavaScript or TypeScript code!
+@#$%^&*()
+<<>>
+function broken {
+  // missing parentheses
+}

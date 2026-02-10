@@ -1,0 +1,53 @@
+{
+  "name": "has-jsx",
+  "version": "0.0.1",
+  "description": "CLI and programmatic tool to detect JSX in files using AST analysis",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "bin": {
+    "has-jsx": "bin/has-jsx.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npx tsdown",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "jsx",
+    "detect",
+    "ast",
+    "cli",
+    "typescript",
+    "react"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@ast-grep/napi": "^0.40.5",
+    "commander": "^14.0.3"
+  },
+  "devDependencies": {
+    "tsdown": "^0.20.3",
+    "vitest": "^4.0.18"
+  }
+}
