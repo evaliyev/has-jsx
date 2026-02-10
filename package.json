@@ -1,6 +1,6 @@
 {
   "name": "has-jsx",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CLI and programmatic tool to detect JSX in files using AST analysis",
   "type": "module",
   "main": "./dist/index.cjs",
