@@ -39,6 +39,14 @@
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evaliyev/has-jsx.git"
+  },
+  "homepage": "https://github.com/evaliyev/has-jsx#readme",
+  "bugs": {
+    "url": "https://github.com/evaliyev/has-jsx/issues"
+  },
   "engines": {
     "node": ">=20.0.0"
   },
