@@ -115,6 +115,17 @@ describe('containsJSX', () => {
       `;
       expect(containsJSX(source)).toBe(false);
     });
+
+    it('returns false for JSX-like comments', () => {
+      const source = `
+        // This comment mentions <div> but is not JSX
+        /* <p>This is also not JSX</p> */
+        function notJSX() {
+          return "string with <tag>";
+        }
+      `;
+      expect(containsJSX(source)).toBe(false);
+    });
   });
 
   describe('TypeScript generics (no false positives)', () => {
@@ -270,6 +281,33 @@ describe('containsJSX', () => {
     });
   });
 
+  describe('JSX syntax variants', () => {
+    it('detects JSX with namespaced name', () => {
+      const source = `const App = () => <xml:svg><xml:circle /></xml:svg>;`;
+      expect(containsJSX(source)).toBe(true);
+    });
+
+    it('detects JSX with member expression', () => {
+      const source = `const App = () => <UI.Button onClick={handler} />;`;
+      expect(containsJSX(source)).toBe(true);
+    });
+
+    it('detects JSX with spread attribute', () => {
+      const source = `const App = () => <Component {...props} />;`;
+      expect(containsJSX(source)).toBe(true);
+    });
+
+    it('detects JSX with spread child', () => {
+      const source = `const App = () => <ul>{...items}</ul>;`;
+      expect(containsJSX(source)).toBe(true);
+    });
+
+    it('detects JSX attribute value as element', () => {
+      const source = `const App = () => <Foo bar=<Bar /> />;`;
+      expect(containsJSX(source)).toBe(true);
+    });
+  });
+
   describe('Edge cases', () => {
     it('detects JSX in arrow functions', () => {
       const source = `
@@ -294,17 +332,6 @@ describe('containsJSX', () => {
         }
       `;
       expect(containsJSX(source)).toBe(true);
-    });
-
-    it('returns false for JSX-like comments', () => {
-      const source = `
-        // This comment mentions <div> but is not JSX
-        /* <p>This is also not JSX</p> */
-        function notJSX() {
-          return "string with <tag>";
-        }
-      `;
-      expect(containsJSX(source)).toBe(false);
     });
   });
 });
