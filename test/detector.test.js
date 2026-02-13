@@ -66,6 +66,10 @@ describe('containsJSX', () => {
       `;
       expect(containsJSX(source)).toBe(true);
     });
+
+    it('detects empty JSX fragments', () => {
+      expect(containsJSX('<></>')).toBe(true);
+    });
   });
 
   describe('No JSX detection', () => {
