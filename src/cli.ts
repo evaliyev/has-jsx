@@ -9,13 +9,13 @@ import { hasJSX, hasJSXInString } from './index.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-/**
- * Runs the CLI with the provided arguments.
- *
- * @param {string[]} argv - Command line arguments (process.argv)
- * @returns {Promise<void>}
- */
-export async function run(argv) {
+interface CliOptions {
+  file?: string;
+  verbose?: boolean;
+  quiet?: boolean;
+}
+
+export async function run(argv: string[]): Promise<void> {
   const packageJson = JSON.parse(
     readFileSync(join(__dirname, '../package.json'), 'utf-8')
   );
@@ -32,14 +32,14 @@ export async function run(argv) {
     .option('-q, --quiet', 'Silent mode (exit codes only)')
     .exitOverride()
     .configureOutput({
-      writeOut: (str) => console.log(str.trimEnd()),
-      writeErr: (str) => console.error(str.trimEnd()),
+      writeOut: (str: string) => console.log(str.trimEnd()),
+      writeErr: (str: string) => console.error(str.trimEnd()),
     })
-    .action(async (source, options) => {
+    .action(async (source: string | undefined, options: CliOptions) => {
       try {
-        let result;
-        let inputType;
-        let inputValue;
+        let result: boolean;
+        let inputType: 'file' | 'string';
+        let inputValue: string;
 
         if (options.file) {
           result = await hasJSX(options.file);
@@ -70,12 +70,12 @@ export async function run(argv) {
           console.log(result ? 'JSX detected' : 'No JSX detected');
           process.exit(exitCode);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         if (isProcessExitError(error)) {
           throw error;
         }
         if (!options.quiet) {
-          console.error(`Error: ${error.message}`);
+          console.error(`Error: ${(error as Error).message}`);
         }
         process.exit(2);
       }
@@ -83,7 +83,7 @@ export async function run(argv) {
 
   try {
     await program.parseAsync(argv);
-  } catch (error) {
+  } catch (error: unknown) {
     if (isProcessExitError(error) || isCommanderError(error)) {
       return;
     }
@@ -91,10 +91,16 @@ export async function run(argv) {
   }
 }
 
-function isProcessExitError(error) {
-  return error.message?.startsWith('process.exit(');
+function isProcessExitError(error: unknown): boolean {
+  return error instanceof Error && error.message.startsWith('process.exit(');
 }
 
-function isCommanderError(error) {
-  return error.code?.startsWith('commander.');
+function isCommanderError(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    typeof (error as { code: unknown }).code === 'string' &&
+    (error as { code: string }).code.startsWith('commander.')
+  );
 }

@@ -13,9 +13,9 @@ const fixtures = {
 };
 
 describe('CLI', () => {
-  let exitCode;
-  let consoleOutput;
-  let consoleErrorOutput;
+  let exitCode: number | null;
+  let consoleOutput: string[];
+  let consoleErrorOutput: string[];
 
   beforeEach(() => {
     exitCode = null;
@@ -23,17 +23,17 @@ describe('CLI', () => {
     consoleErrorOutput = [];
 
     // Mock process.exit
-    vi.spyOn(process, 'exit').mockImplementation((code) => {
-      exitCode = code;
+    vi.spyOn(process, 'exit').mockImplementation((code?: number) => {
+      exitCode = code ?? 0;
       throw new Error(`process.exit(${code})`);
     });
 
     // Mock console.log and console.error
-    vi.spyOn(console, 'log').mockImplementation((msg) => {
+    vi.spyOn(console, 'log').mockImplementation((msg: string) => {
       consoleOutput.push(msg);
     });
 
-    vi.spyOn(console, 'error').mockImplementation((msg) => {
+    vi.spyOn(console, 'error').mockImplementation((msg: string) => {
       consoleErrorOutput.push(msg);
     });
   });
@@ -46,7 +46,7 @@ describe('CLI', () => {
     it('exits with code 0 when JSX is detected in file', async () => {
       try {
         await run(['node', 'has-jsx', '-f', fixtures.hasJsx]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
       expect(exitCode).toBe(0);
@@ -55,7 +55,7 @@ describe('CLI', () => {
     it('exits with code 1 when no JSX is detected in file', async () => {
       try {
         await run(['node', 'has-jsx', '-f', fixtures.noJsx]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
       expect(exitCode).toBe(1);
@@ -64,7 +64,7 @@ describe('CLI', () => {
     it('exits with code 0 when JSX is detected in string', async () => {
       try {
         await run(['node', 'has-jsx', '<div>Hello</div>']);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
       expect(exitCode).toBe(0);
@@ -73,7 +73,7 @@ describe('CLI', () => {
     it('exits with code 1 when no JSX is detected in string', async () => {
       try {
         await run(['node', 'has-jsx', 'const x = 5;']);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
       expect(exitCode).toBe(1);
@@ -82,7 +82,7 @@ describe('CLI', () => {
     it('exits with code 2 on error (file not found)', async () => {
       try {
         await run(['node', 'has-jsx', '-f', fixtures.nonexistent]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
       expect(exitCode).toBe(2);
@@ -91,7 +91,7 @@ describe('CLI', () => {
     it('exits with code 2 when no input provided', async () => {
       try {
         await run(['node', 'has-jsx']);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
       expect(exitCode).toBe(2);
@@ -102,7 +102,7 @@ describe('CLI', () => {
     it('prints "JSX detected" when JSX is found in file', async () => {
       try {
         await run(['node', 'has-jsx', '-f', fixtures.hasJsx]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
       expect(consoleOutput).toContain('JSX detected');
@@ -111,7 +111,7 @@ describe('CLI', () => {
     it('prints "No JSX detected" when JSX is not found in file', async () => {
       try {
         await run(['node', 'has-jsx', '-f', fixtures.noJsx]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
       expect(consoleOutput).toContain('No JSX detected');
@@ -120,7 +120,7 @@ describe('CLI', () => {
     it('prints "JSX detected" when JSX is found in string', async () => {
       try {
         await run(['node', 'has-jsx', '<Button />']);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
       expect(consoleOutput).toContain('JSX detected');
@@ -129,7 +129,7 @@ describe('CLI', () => {
     it('prints error message on file not found', async () => {
       try {
         await run(['node', 'has-jsx', '-f', fixtures.nonexistent]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
       expect(consoleErrorOutput.length).toBeGreaterThan(0);
@@ -141,7 +141,7 @@ describe('CLI', () => {
     it('outputs JSON with hasJSX: true for file', async () => {
       try {
         await run(['node', 'has-jsx', '--verbose', '-f', fixtures.hasJsx]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
 
@@ -157,7 +157,7 @@ describe('CLI', () => {
     it('outputs JSON with hasJSX: true for string', async () => {
       try {
         await run(['node', 'has-jsx', '--verbose', '<Component />']);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
 
@@ -173,7 +173,7 @@ describe('CLI', () => {
     it('outputs JSON with hasJSX: false', async () => {
       try {
         await run(['node', 'has-jsx', '--verbose', '-f', fixtures.noJsx]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
 
@@ -188,7 +188,7 @@ describe('CLI', () => {
     it('uses short option -v', async () => {
       try {
         await run(['node', 'has-jsx', '-v', '-f', fixtures.hasJsx]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
 
@@ -205,7 +205,7 @@ describe('CLI', () => {
     it('produces no output with --quiet for file', async () => {
       try {
         await run(['node', 'has-jsx', '--quiet', '-f', fixtures.hasJsx]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
 
@@ -217,7 +217,7 @@ describe('CLI', () => {
     it('produces no output with --quiet for string', async () => {
       try {
         await run(['node', 'has-jsx', '--quiet', '<div>test</div>']);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
 
@@ -229,7 +229,7 @@ describe('CLI', () => {
     it('produces no error output with --quiet on error', async () => {
       try {
         await run(['node', 'has-jsx', '--quiet', '-f', fixtures.nonexistent]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
 
@@ -241,7 +241,7 @@ describe('CLI', () => {
     it('uses short option -q', async () => {
       try {
         await run(['node', 'has-jsx', '-q', '-f', fixtures.hasJsx]);
-      } catch (e) {
+      } catch {
         // Expected: process.exit throws
       }
 
@@ -254,7 +254,7 @@ describe('CLI', () => {
     it('displays version', async () => {
       try {
         await run(['node', 'has-jsx', '--version']);
-      } catch (e) {
+      } catch {
         // Expected: commander exits
       }
 

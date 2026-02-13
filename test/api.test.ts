@@ -56,6 +56,13 @@ describe('hasJSX API', () => {
     });
   });
 
+  describe('Binary content (no false positives)', () => {
+    it('returns false for binary content', () => {
+      const binary = Buffer.from([0x7f, 0x45, 0x4c, 0x46, 0x00, 0x3c, 0x64, 0x69, 0x76, 0x3e]).toString('utf-8');
+      expect(hasJSXInString(binary)).toBe(false);
+    });
+  });
+
   describe('Error handling', () => {
     it('throws error for nonexistent file', async () => {
       await expect(hasJSX('/nonexistent/file.js')).rejects.toThrow('File not found');
@@ -103,10 +110,10 @@ describe('hasJSX API', () => {
 
     describe('Error handling', () => {
       it('throws TypeError for non-string input', () => {
-        expect(() => hasJSXInString(null)).toThrow(TypeError);
-        expect(() => hasJSXInString(undefined)).toThrow(TypeError);
-        expect(() => hasJSXInString(123)).toThrow(TypeError);
-        expect(() => hasJSXInString({})).toThrow(TypeError);
+        expect(() => hasJSXInString(null as unknown as string)).toThrow(TypeError);
+        expect(() => hasJSXInString(undefined as unknown as string)).toThrow(TypeError);
+        expect(() => hasJSXInString(123 as unknown as string)).toThrow(TypeError);
+        expect(() => hasJSXInString({} as unknown as string)).toThrow(TypeError);
       });
 
       it('returns false for empty string', () => {

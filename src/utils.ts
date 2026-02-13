@@ -1,14 +1,8 @@
 import { readFile } from 'fs/promises';
 import { existsSync, statSync } from 'fs';
 
-/**
- * Reads file content from the filesystem with validation.
- *
- * @param {string} filepath - Absolute or relative path to file
- * @returns {Promise<string>} File content
- * @throws {Error} If file doesn't exist, is not a file, or can't be read
- */
-export async function readFileContent(filepath) {
+/** Reads file content from the filesystem with validation. */
+export async function readFileContent(filepath: string): Promise<string> {
   if (!existsSync(filepath)) {
     throw new Error(`File not found: ${filepath}`);
   }
